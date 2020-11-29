@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>list</title>
+        <script src="js/jquery-3.5.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="js/bootstrap-table.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-grid.min.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-reboot.min.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-table.min.css">
+        
+    </head>
+    <body class="container">
+
+        <table id="dirview">
+            <thead>
+                <th>name</th>
+                <th>type</th>
+                <th>size</th>
+                <th>goto</th>
+            </thead>
+        </table>
+        <iframe id="dirsource"src=".." style="width:720px;height:640px;" onload="analyze_and_populate_table()">
+        </iframe>
+            <script>
+                function analyze_and_populate_table(){
+                    var dirContent=$("#dirsource")[0].contentDocument.getElementsByTagName("pre")[0].innerText;
+                    //直接去掉 [To Parent Directory]
+                    var entries = dirContent.split("\n").slice(2);
+                    entries=entries.slice(0,entries.length-1 ); 
+                    var dataset = [];
+                    
+                    for(let eindex = 0 ; eindex < entries.length; eindex++){
+                        dataset[eindex]=process_entry(entries[eindex]);
+                    }
+                    console.log(dataset);
+                    $("#dirview").bootstrapTable();
+                    $("#dirsource").remove()
+
+                    /*
+                        internal funcitons
+                    */
+                    //process entries into datasets
+                    function process_entry(entry){
+                        let sections = entry.split(/\s{2,}/).slice(1);// 切割 日期跟檔案資訊部分[日期部分 , 檔案資訊]
+                        let datePart =sections[0].trim();
+                        let type = (sections[1].indexOf("<dir>")== -1) ? "file" : "dir";
+                        let fileInfo = sections[1].split(/(\d{1,}|<dir>)\s/);
+                        let name = fileInfo[2];
+                        let size =(type === "dir") ? "" : fileInfo[1];
+                        return {
+                            "datemotdified" : datePart,
+                            "type" : type,
+                            "name" : name,
+                            "size" :size
+                        }
+                    }
+                }
+
+
+
+            </script>
+        
+    </body>
+
+
+</html>
