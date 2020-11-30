@@ -17,13 +17,13 @@
 
         <table id="dirview">
             <thead>
-                <th>name</th>
-                <th>type</th>
-                <th>size</th>
-                <th>goto</th>
+                <th data-field="name">name</th>
+                <th data-field="type">type</th>
+                <th data-field="size">size</th>
+                <th data-field="datemotdified">datemotdified</th>
             </thead>
         </table>
-        <iframe id="dirsource"src=".." style="width:720px;height:640px;" onload="analyze_and_populate_table()">
+        <iframe id="dirsource"src=".." style="visibility:hidden;width:0px;height:0px;" onload="analyze_and_populate_table()">
         </iframe>
             <script>
                 function analyze_and_populate_table(){
@@ -36,9 +36,8 @@
                     for(let eindex = 0 ; eindex < entries.length; eindex++){
                         dataset[eindex]=process_entry(entries[eindex]);
                     }
-                    console.log(dataset);
-                    $("#dirview").bootstrapTable();
-                    $("#dirsource").remove()
+
+                    $("#dirview").bootstrapTable({data:dataset});
 
                     /*
                         internal funcitons
