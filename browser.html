@@ -41,7 +41,7 @@
                             "name"  :   e.innerText,
                             "link"  :   e.href,
                             "type"  :   mark==="<dir>" ? "dir" : "file" ,
-                            "datemotdified" :   markText.replaceAll(mark,"").trim(),
+                            "datemotdified" :   markText.replace(mark,"").trim(),
                             "size"  :   mark
                         });
                     }
