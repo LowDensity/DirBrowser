@@ -26,37 +26,28 @@
         <iframe id="dirsource"src=".." style="visibility:hidden;width:0px;height:0px;" onload="analyze_and_populate_table()">
         </iframe>
             <script>
+			//改用previousSibling，用<a>標籤當作基準
+			//(\d+|<dir>)$
                 function analyze_and_populate_table(){
-                    var dirContent=$("#dirsource")[0].contentDocument.getElementsByTagName("pre")[0].innerText;
-                    //直接去掉 [To Parent Directory]
-                    var entries = dirContent.split("\n").slice(2);
-                    entries=entries.slice(0,entries.length-1 ); 
+                    var dirLinks=$("#dirsource")[0].contentDocument.getElementsByTagName("a");
                     var dataset = [];
-                    
-                    for(let eindex = 0 ; eindex < entries.length; eindex++){
-                        dataset[eindex]=process_entry(entries[eindex]);
+                    //直接去掉 [To Parent Directory]
+                    for(var i =1 ; i< dirLinks.length;i++){
+                        var e = dirLinks[i];
+                        var markText = e.previousSibling.wholeText;
+                        var mark = markText.match(/(\d+|<dir>)/gm);
+                        mark=mark[mark.length-1];
+                        dataset.push({
+                            "name"  :   e.innerText,
+                            "link"  :   e.href,
+                            "type"  :   mark==="<dir>" ? "dir" : "file" ,
+                            "datemotdified" :   markText.replaceAll(mark,"").trim(),
+                            "size"  :   mark
+                        });
                     }
 
                     $("#dirview").bootstrapTable({data:dataset});
 
-                    /*
-                        internal funcitons
-                    */
-                    //process entries into datasets
-                    function process_entry(entry){
-                        let sections = entry.split(/\s{2,}/).slice(1);// 切割 日期跟檔案資訊部分[日期部分 , 檔案資訊]
-                        let datePart =sections[0].trim();
-                        let type = (sections[1].indexOf("<dir>")== -1) ? "file" : "dir";
-                        let fileInfo = sections[1].split(/(\d{1,}|<dir>)\s/);
-                        let name = fileInfo[2];
-                        let size =(type === "dir") ? "" : fileInfo[1];
-                        return {
-                            "datemotdified" : datePart,
-                            "type" : type,
-                            "name" : name,
-                            "size" :size
-                        }
-                    }
                 }
 
 
