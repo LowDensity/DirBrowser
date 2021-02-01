@@ -12,6 +12,7 @@ The reason for me to do this is just for fun and to challenge myself. And in hop
 
 ---
 
+
 ## This page is only for IIS.
 
 I once hoped I could have a universal beautifier.
@@ -32,7 +33,11 @@ The only thing  one will have to do is to grab the correct column in a \<tr\>.
 Since IIS is the only server application known to use such a primitive way to present the listing page. There's no way this can be universal.
 
 ---
+## Demo
 
+An online demo can be found [here](https://dirbrowser-demo.netlify.app/).
+
+---
 ## Licensing
 
 The repository is displayed here only as a material for anyone who came across similar need. 
