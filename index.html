@@ -2,11 +2,139 @@
 
 <html>
     <head>
-        <title>DemoSite</title>
-        
+        <title>Demo for DirBrowser</title>
+        <script src="js/jquery-3.5.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="js/bootstrap-table.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-grid.min.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-reboot.min.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-table.min.css">
+
     </head>
-    <body>
-        <h1>Demo Site</h1>
+    <body class="container">
+        <h1>DirBrowser</h1>
+        <div class="bg-info">
+            <h2>Introduction</h2>
+            <h4>
+                <p>
+                        This page details how I created the DirBrowser.<br>
+                    An almost usesless application(But it's fun and educational). <br>
+                    Which helps one of my IT friend to solve his problem.<br>
+                    An online demo can be found  <a href="browser.html">here</a>.<br>
+                    Let's get started.<br>
+                </p>
+            </h4>
+            <h2>Background</h2>
+            <h4>
+                One day, my IT friend(IT-friend afterward) PM me asking how he 
+                could "Run a script on client from server."
+                It was a ridiculous request for anyone with a basic level of knowledge of
+                how things work. 
+                WTF are you talking about ?
+                After the entire afternoon of messaging, it turned out that he wants to 
+                use his computer as a CDN,so he could use scripts files located on his 
+                computer to perform his job.
+                I first think of using SMB. 
+                It was rejected for the need of changing a system setting than reset 
+                it after things are done.
+                IT-friend then came to the conclusion that a web page is best suited for this job.
+                What ? How ? 
+                Firstly, his company assigned him a windows laptop, and it is super easy to setup IIS.
+                Second, ports 80/443 for http/https are not blocked by default on most computer.So you don't
+                have to change setting first and reset them after things are done.
+                It's alomost perfect solution.
+                Quite ingenious , isn't it.
+                
+                The only problem is that he doesn't like the default looking of the default directory-listing page
+                and wants to customize it.
+                
+                Seems no problem.
+                There's nothing I can do for you ,enjoy and , good luck.
+
+                But later he encountered a problem : Where to start ? Where can I set styles for the Directory 
+                listing page ? 
+
+                The answer is "somewhere in dll ,  nowhere"
+                So, it turned out that it is un-relistic to change default style of directory listing page.
+                If you can't change , why don't you create a new one embedding the original one?
+
+                It is this problem which led to the question "How can I Run a script on client from server."
+                It is actually "How can I run a script on server to create directory listing page."
+                He spent quite sometime google for solutions. 
+                Seeing that him completely lost, going absolutely wrong direction,talking about 
+                killing flys with cannon stuff.
+                I ran out of patience and decided to do a demo which would give him a direction.  
+                This, is the reason of how this application is created. 
+            </h4>
+        </div>
+        <div class="bg-success">
+            <h2>How should this work?</h2>
+            <h4>
+                The answer is simple , if we can't change original, 
+                then we make new one embedding it, with Iframe.
+                The plan is that we have new html file called browser.html which contains an iframe 
+                with its "src" set to directory listing page.
+                On Iframe's "onload" event, we grab the content inside ,parse it into Javascript Object  
+                and use them.
+            </h4>
+            <h2>Initial Research</h2>
+            <h4>
+                After the structure is decided,I began my own research.
+                The IIS directory-listing page looks like this:
+                <img src="pictures/democontent_02.jpg" alt="pictures/democontent_02.jpg"/>
+                The structure for this page is quite simple,
+                <img src="pictures/democontent_03.jpg" alt="pictures/democontent_03.jpg"/>
+                You can completely ignore the H1 of localhost.
+                However , it becomes crazy after extending the "pre" tag. 
+                <img src="pictures/democontent_04.jpg" alt="how it looks like inside pre tag"/>
+                It's a mass inside. Does there exists any order ? 
+                Yes there is ,IT-friend found it hard to understand an gave up analyzing the 
+                structure soon after seeing this.
+                I kept going.
+                
+                The biggest problem here is the mixing of tag and plaintext, and not splitting 
+                "go to upper level" link with other content(if they did this , the job would be
+                much easier).
+                But there is still order in it. See any clues?
+                The "a" tag. Every entries are an a tag in it.  
+                We can grab all "a" tags as an anchor , and easily skip "go to parent directory" by 
+                starting loop index from 1 instead of 0.
+
+                We can get filename and exact url from the "a" tag. 
+                But what about filesize and last-modified date ?
+
+                They can be acceessed through tag.previousSibling, but how can I separate them ? 
+
+                This is apparently a situation for Regular Expression.
+                I used "2 continuous space " as an anchor. It didn't work out well because the space
+                between last-modified-date and filesize is not necceisarily 2 spaces, they can be 1.
+                But using 1 space to split meant nothing. 
+                By doing so , you  also tear apart the last-modified-date.
+                
+                Using a regex for datetime is a possible choice. But IIS displays datetime to
+                the timezone set on server computer. The Reg-Exp will be terribly long just to 
+                describe one format, not to mention a Reg-Exp that can check many time formats.
+
+                How about going reverse , see if there is something missing ?
+                Datetime ... filesize... 
+                Yes , awesome, the filesize is always in Bytes and is a pure string of digits!
+                So,instead of recognizing the datetime format, we simply recognize the 
+                filesize string and remove them from original string.
+                After that , time for datetime-libraries!
+                
+                And then , we got everything in directory-listing-page into a JS object.
+                
+                Now we can use those data. In this case , I put them into Bootstrap-table.
+                But this is just a demo to show that you can do it this way , you can always 
+                use them the way you like.
+                
+
+
+
+            </h4>
+        </div>
     </body>
 
-</html>
+    </html>
